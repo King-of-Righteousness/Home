@@ -1,0 +1,414 @@
+ <!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=0" />
+  <title>KOR Home | Church Portal</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+    body { font-family: 'Inter', sans-serif; margin: 0; color: #1a1a1a; -webkit-tap-highlight-color: transparent; min-height: 100vh; position: relative; overflow-x: hidden; }
+    body::before {
+      content: ""; position: fixed; inset: 0;
+      background: linear-gradient(rgba(244,242,238,.10), rgba(244,242,238,.28)), url("https://lh3.googleusercontent.com/d/1jPFIU1kANUyNMC4o5uAG-y1NYY1NJZ33=s1920");
+      background-size: cover; background-position: center; background-repeat: no-repeat;
+      z-index: -1; filter: blur(1px); opacity: .92;
+    }
+    @keyframes korPulse {
+      0%{transform:scale(1);box-shadow:0 0 0 rgba(201,193,182,0)}
+      50%{transform:scale(1.05);box-shadow:0 0 20px rgba(201,193,182,.55)}
+      100%{transform:scale(1);box-shadow:0 0 0 rgba(201,193,182,0)}
+    }
+    .korLogo {
+      width: 44px; height: 44px; border-radius: 14px;
+      background: linear-gradient(135deg, rgba(214,207,196,.95), rgba(201,193,182,.95));
+      display: grid; place-items: center; box-shadow: 0 14px 30px rgba(0,0,0,.12);
+      border: 1px solid rgba(120,113,108,.35); animation: korPulse 2.8s ease-in-out infinite;
+    }
+    .formal-serif { font-family: 'Playfair Display', serif; }
+    .glass-card {
+      background: rgba(255, 255, 255, 0.65); backdrop-filter: blur(10px) saturate(120%);
+      border: 1px solid rgba(120,113,108,.35); border-radius: 1.25rem; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .hover-card:active { transform: scale(0.97); }
+    @media (min-width: 768px) {
+      .hover-card:hover { transform: translateY(-4px); border-color: #3b82f6; box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.1); }
+    }
+
+    body {
+        zoom: 75%; 
+        width: 133.33vw !important;
+        height: 133.33vh !important;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        overflow-x: hidden;
+    }
+  </style>
+</head>
+<body class="min-h-screen pb-10">
+
+<nav class="w-full border-b bg-white/70 backdrop-blur-lg sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="korLogo"><img src="https://lh3.googleusercontent.com/d/1iLMCP2wh8e4BdxM_rds3W1GxkX0LVUqi=s220" class="w-7 h-7 object-contain" alt="K" /></div>
+      <div class="leading-none">
+        <h1 class="text-md font-black tracking-tight uppercase text-gray-800">KOR <span class="text-blue-600">Home</span></h1>
+        <p class="text-[9px] uppercase tracking-widest text-slate-500 font-bold mt-1">Portal Gateway</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-2">
+      <button onclick="showLogin()" class="text-[10px] font-black uppercase tracking-wider bg-slate-900 text-white px-4 py-2 rounded-xl">Console</button>
+      <button id="btnLogout" class="hidden text-[10px] font-black uppercase tracking-wider bg-red-50 text-red-600 px-4 py-2 rounded-xl">Exit</button>
+    </div>
+  </div>
+</nav>
+
+<main id="publicView" class="max-w-7xl mx-auto px-4 sm:px-6 py-12">
+  <div class="max-w-3xl mb-12">
+    <h2 class="formal-serif text-3xl sm:text-4xl text-gray-900 leading-tight mb-4 italic">Welcome back to the Portal.</h2>
+    <div class="w-16 h-0.5 bg-gray-400 mb-6"></div>
+    <p id="statusTxt" class="text-sm sm:text-base text-gray-600 font-medium leading-relaxed italic">Synchronizing with cloud directory...</p>
+  </div>
+  <div id="grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+    <div class="bg-slate-200/50 h-24 rounded-2xl animate-pulse"></div>
+  </div>
+</main>
+
+<section id="adminPortal" class="hidden max-w-7xl mx-auto px-4 py-8">
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+     <h2 class="text-2xl font-black text-slate-900 tracking-tight">Console <span class="text-blue-600">Manager</span></h2>
+     <button onclick="clearEditor();" class="w-full sm:w-auto bg-blue-600 text-white px-6 py-3 rounded-xl text-xs font-black uppercase tracking-widest shadow-lg">+ New Entry</button>
+  </div>
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+    <div class="lg:col-span-4 order-2 lg:order-1">
+      <div class="glass-card p-6 sticky top-24 shadow-sm">
+        <div class="space-y-4">
+          <input id="f_id" type="hidden" />
+          <input id="f_name" class="w-full bg-white/50 border border-gray-200 rounded-xl px-4 py-3 outline-none text-sm font-semibold" placeholder="Entry Title" />
+          <input id="f_file" class="w-full bg-white/50 border border-gray-200 rounded-xl px-4 py-3 outline-none text-sm font-semibold" placeholder="Target Page" />
+          <div class="grid grid-cols-2 gap-3">
+             <input id="f_icon" class="w-full bg-white/50 border border-gray-200 rounded-xl px-4 py-3 text-center" placeholder="Glyph ⚡" />
+             <input id="f_order" type="number" class="w-full bg-white/50 border border-gray-200 rounded-xl px-4 py-3 outline-none" placeholder="Sort" />
+          </div>
+          <textarea id="f_desc" class="w-full bg-white/50 border border-gray-200 rounded-xl px-4 py-3 h-20 outline-none resize-none text-sm" placeholder="Description..."></textarea>
+          <button id="btnSave" onclick="save()" class="w-full bg-slate-900 text-white py-4 rounded-xl font-black text-[10px] uppercase tracking-widest">
+             <span id="saveTxt">Save Entry</span>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="lg:col-span-8 order-1 lg:order-2">
+      <div class="glass-card overflow-hidden shadow-sm">
+          <table class="w-full text-sm text-left">
+            <thead class="bg-white/50 text-[9px] uppercase font-black text-slate-400">
+              <tr><th class="px-6 py-4">Ministry Portal</th><th class="px-6 py-4 text-right">Settings</th></tr>
+            </thead>
+            <tbody id="adminTbody" class="divide-y divide-slate-100 font-medium italic text-gray-400">
+              <tr><td colspan="2" class="p-10 text-center">Loading registry...</td></tr>
+            </tbody>
+          </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div id="loginOverlay" class="fixed inset-0 z-[60] flex items-center justify-center p-4 hidden" style="background: rgba(15,23,42,0.5); backdrop-filter: blur(8px);">
+  <div class="w-full max-w-sm glass-card p-10 shadow-2xl relative text-center">
+    <button onclick="hideLogin()" class="absolute top-5 right-5 text-slate-400 hover:text-slate-900 transition-colors">✕</button>
+    <div class="korLogo mx-auto mb-6"><img src="https://lh3.googleusercontent.com/d/1iLMCP2wh8e4BdxM_rds3W1GxkX0LVUqi=s220" class="w-8 h-8 object-contain" /></div>
+    <h2 class="formal-serif text-2xl text-gray-900 mb-2 italic">Secure Access</h2>
+    
+    <div class="space-y-4">
+      <input id="email" type="email" class="w-full bg-white/50 border border-slate-200 rounded-xl px-5 py-4 focus:border-blue-500 outline-none font-medium text-sm text-center" placeholder="Email" />
+      <input id="password" type="password" class="w-full bg-white/50 border border-slate-200 rounded-xl px-5 py-4 focus:border-blue-500 outline-none font-bold text-center text-lg" placeholder="••••••••" />
+      
+      <div id="loginMsg" class="text-center text-[10px] font-black text-red-500 min-h-[1.5rem] uppercase"></div>
+      
+      <button onclick="doLogin()" class="w-full bg-slate-900 text-white font-black py-4 rounded-xl text-xs uppercase tracking-widest shadow-xl">Authenticate</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  /* ---------------- CONFIG ---------------- */
+  let PAGES = [];
+  const $ = (id) => document.getElementById(id);
+  function showLogin() { $("loginOverlay").classList.remove("hidden"); }
+  function hideLogin() { $("loginOverlay").classList.add("hidden"); }
+  function clearEditor() { ["f_id","f_name","f_file","f_icon","f_desc","f_order"].forEach(id => $(id).value = ""); }
+
+  /* ---------------- UI LOGIC ---------------- */
+  
+  function esc_(s) { return String(s || "").replaceAll("&", "&").replaceAll("<", "<").replaceAll(">", ">"); }
+
+  // Called automatically by Firebase's onValue listener in the module below
+  window.updatePortalUI = function(data) {
+      if(!data) {
+          $("grid").innerHTML = '<div class="col-span-full text-center text-gray-500 italic py-10">No entries found.</div>';
+          if(!$("adminPortal").classList.contains("hidden")) {
+              $("adminTbody").innerHTML = '<tr><td colspan="2" class="p-10 text-center">No entries found.</td></tr>';
+          }
+          return;
+      }
+
+      const pagesArray = Object.values(data).sort((a,b) => (a.order||0) - (b.order||0));
+      PAGES = pagesArray;
+      
+      $("statusTxt").textContent = "Live Directory Active.";
+      $("grid").innerHTML = PAGES.map(p => `
+        <div class="glass-card hover-card p-5 cursor-pointer flex items-center gap-4 group" onclick="window.open('${p.file}', '_blank')">
+          <div class="w-12 h-12 bg-white/40 rounded-xl flex items-center justify-center text-2xl group-hover:bg-blue-50 transition-all flex-shrink-0 border border-gray-100">${p.icon || '🌿'}</div>
+          <div class="overflow-hidden">
+            <h4 class="text-[13px] font-bold text-gray-900 group-hover:text-blue-600 truncate">${esc_(p.name)}</h4>
+            <p class="text-[11px] text-gray-400 font-medium truncate italic">${esc_(p.desc || 'System portal')}</p>
+          </div>
+        </div>
+      `).join("");
+      
+      if(window.renderAdminTable) window.renderAdminTable();
+  };
+
+  window.renderAdminTable = function() {
+    if(!$("adminPortal").classList.contains("hidden")) {
+        $("adminTbody").innerHTML = PAGES.map(p => `
+          <tr class="hover:bg-white/50">
+            <td class="px-6 py-4 flex items-center gap-3">
+                <span class="text-lg">${p.icon || '📄'}</span>
+                <span class="font-black text-gray-900 text-xs truncate">${p.name}</span>
+            </td>
+            <td class="px-6 py-4 text-right space-x-3">
+               <button onclick='editPage(${JSON.stringify(p)})' class="text-blue-600 font-black text-[10px] uppercase hover:underline">Edit</button>
+               <button onclick="delPage('${p.id}')" class="text-red-500 font-black text-[10px] uppercase hover:underline">Delete</button>
+            </td>
+          </tr>
+        `).join("");
+    }
+  }
+
+  function editPage(p) {
+    $("f_id").value = p.id;
+    $("f_name").value = p.name;
+    $("f_file").value = p.file;
+    $("f_icon").value = p.icon;
+    $("f_desc").value = p.desc;
+    $("f_order").value = p.order;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  /* ---------------- FIREBASE-ONLY ACTIONS ---------------- */
+
+  function save() {
+    const btn = $("btnSave");
+    const label = $("saveTxt");
+    btn.disabled = true; 
+    label.textContent = "Saving to Firebase...";
+
+    let id = $("f_id").value;
+    if (!id) id = "entry_" + Date.now().toString(36);
+
+    const payload = {
+      id: id,
+      name: $("f_name").value,
+      file: $("f_file").value,
+      icon: $("f_icon").value,
+      desc: $("f_desc").value,
+      order: Number($("f_order").value) || 0
+    };
+
+    // Push straight to Firebase (Instant)
+    if(window.firebaseSaveEntry) {
+        window.firebaseSaveEntry(payload);
+    }
+
+    // Quick UI reset
+    setTimeout(() => {
+        btn.disabled = false; 
+        label.textContent = "Save Entry";
+        clearEditor();
+    }, 400);
+  }
+
+  function delPage(id) {
+    if (!confirm("Permanently delete this entry?")) return;
+    
+    // Delete instantly from Firebase
+    if(window.firebaseDeleteEntry) {
+        window.firebaseDeleteEntry(id);
+    }
+    clearEditor();
+  }
+
+  // --- FIREBASE AUTH HANDLERS ---
+  window.doLogin = null; 
+  window.currentUser = null;
+</script>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getDatabase, ref, set, remove, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    // [NEW] Firestore Imports for Role Checking
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyCWAxUm_Z_i-EP_xqayhQrwsL4Qkmh5fMA",
+        authDomain: "slidesync-37cd4.firebaseapp.com",
+        databaseURL: "https://slidesync-37cd4-default-rtdb.europe-west1.firebasedatabase.app",
+        projectId: "slidesync-37cd4",
+        storageBucket: "slidesync-37cd4.firebasestorage.app",
+        messagingSenderId: "996754972458",
+        appId: "1:996754972458:web:7f8be6880c3463ac6a4853",
+        measurementId: "G-GCBS3X7STT"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const firestore = getFirestore(app); // [NEW] Init Firestore
+    window.auth = getAuth(app);
+
+
+    // 1. LIVE LISTENER (Public Data)
+    onValue(ref(db, 'portal/entries'), (snapshot) => {
+        const data = snapshot.val();
+        if(window.updatePortalUI) window.updatePortalUI(data || {});
+    });
+
+    // 2. EXPORT FUNCTIONS
+    window.firebaseSaveEntry = (entry) => set(ref(db, 'portal/entries/' + entry.id), entry);
+    window.firebaseDeleteEntry = (id) => remove(ref(db, 'portal/entries/' + id));
+
+    // 3. AUTH LOGIC (Login Action)
+    window.doLogin = async () => {
+        const email = document.getElementById("email").value;
+        const pass = document.getElementById("password").value;
+        const msg = document.getElementById("loginMsg");
+        const btn = document.querySelector("#loginOverlay button:last-child");
+        
+        btn.textContent = "Verifying...";
+        msg.textContent = "";
+
+        try {
+		
+		// 🎯 THE FIX: Create a flag showing they logged in HERE
+            sessionStorage.setItem("home_explicit_login", "true");
+		
+            await signInWithEmailAndPassword(window.auth, email, pass);
+            // The onAuthStateChanged below will handle the permission check
+        } catch(error) {
+            msg.textContent = "Error: " + error.message;
+            msg.style.color = "red";
+            btn.textContent = "Authenticate";
+        }
+    };
+
+    document.getElementById("btnLogout").onclick = () => {
+        sessionStorage.removeItem("home_explicit_login"); // 🎯 Clear the flag
+        signOut(window.auth);
+    };
+
+// 4. AUTH STATE LISTENER (Passive-Aware)
+onAuthStateChanged(window.auth, async (user) => {
+    const loginOverlay = document.getElementById("loginOverlay");
+    const adminPortal = document.getElementById("adminPortal");
+    const publicView = document.getElementById("publicView");
+    const loginMsg = document.getElementById("loginMsg");
+    const loginBtn = document.querySelector("#loginOverlay button:last-child");
+
+    // 1. CLEAN RESET (Always hide admin view first)
+    // We don't know if they are admin yet, so default to safety.
+    // However, we DO NOT sign them out yet.
+    
+    if (user) {
+	
+	// 🎯 THE FIX: Ignore broadcast logins from other tabs!
+        if (sessionStorage.getItem("home_explicit_login") !== "true") {
+            console.log("💤 Ignoring broadcast login. User must authenticate here.");
+            adminPortal.classList.add("hidden");
+            document.getElementById("btnLogout").classList.add("hidden");
+            publicView.classList.remove("hidden");
+            if(loginBtn) loginBtn.textContent = "Authenticate";
+            return; // Stop running the rest of the login checks!
+        }
+	
+        // === USER DETECTED ===
+        // Could be from this tab OR a sub-link tab
+        console.log("👤 Session Active:", user.email);
+
+        try {
+            // Check Admin Role in Firestore
+            if(loginBtn) loginBtn.textContent = "Verifying Role...";
+            
+            const userRef = doc(firestore, "users", user.uid);
+            const userSnap = await getDoc(userRef);
+            
+            let isAdmin = false;
+            if (userSnap.exists()) {
+                const role = String(userSnap.data().role || "").toLowerCase().trim();
+                if (role === 'admin') isAdmin = true;
+            }
+
+            if (isAdmin) {
+                // ✅ SCENARIO A: IT IS AN ADMIN
+                // Whether they logged in here or elsewhere, let them see the console.
+                console.log("🔓 Admin Verified.");
+                window.currentUser = user;
+                
+                loginOverlay.classList.add("hidden");
+                publicView.classList.add("hidden");
+                adminPortal.classList.remove("hidden");
+                document.getElementById("btnLogout").classList.remove("hidden");
+                
+                if(window.renderAdminTable) window.renderAdminTable();
+
+            } else {
+                // ⛔ SCENARIO B: NORMAL USER
+                console.log("🔒 Standard User Detected.");
+
+                // CRITICAL CHECK: Are they trying to enter the Console RIGHT NOW?
+                const isTryingToLoginHere = !loginOverlay.classList.contains("hidden");
+
+                if (isTryingToLoginHere) {
+                    // They are explicitly at the Admin Login screen -> REJECT THEM
+                    throw new Error("Access Denied: Admins Only.");
+                } else {
+                    // They logged in via a Sub-Link (Background Sync) -> IGNORE THEM
+                    // Just ensure the Admin Portal stays hidden
+                    adminPortal.classList.add("hidden");
+                    publicView.classList.remove("hidden");
+                    
+                    // Optional: Show "Exit" button so they can logout if they want
+                    document.getElementById("btnLogout").classList.remove("hidden");
+                }
+            }
+
+        } catch (error) {
+            // FORCE LOGOUT (Only for active break-in attempts)
+            console.warn("⛔ Security:", error.message);
+            
+            if (loginMsg) {
+                loginMsg.textContent = error.message;
+                loginMsg.style.color = "red";
+            }
+            
+            // Wait 2s so they see the error, then kill the session
+            setTimeout(() => signOut(window.auth), 2000);
+        }
+
+    } else {
+        // === LOGGED OUT ===
+        console.log("👋 Guest Mode");
+        window.currentUser = null;
+        
+        // Reset UI
+        adminPortal.classList.add("hidden");
+        document.getElementById("btnLogout").classList.add("hidden");
+        publicView.classList.remove("hidden");
+        if(loginBtn) loginBtn.textContent = "Authenticate";
+    }
+});
+
+    console.log("🔥 Portal Hybrid Engine Active (Admin Secured)");
+</script>
+</body>
+</html>
